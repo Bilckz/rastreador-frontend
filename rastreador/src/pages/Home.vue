@@ -7,11 +7,11 @@
           <v-toolbar-title id="olho">De olho no pacote</v-toolbar-title>
           <div class="flex-grow-1"></div>
           <v-col>
-            <v-text-field name="code" label="Código de rastreamento" v-model="code"></v-text-field>
+            <v-text-field name="code" label="Código de rastreamento" v-model="codeRegister"></v-text-field>
           </v-col>
 
           <v-col>
-            <v-text-field name="product" label="Nome da encomenda" v-model="product"></v-text-field>
+            <v-text-field name="product" label="Nome da encomenda" v-model="productRegister"></v-text-field>
           </v-col>
           <v-col :lg="2">
             <v-btn color="primary" @click="add">Registrar</v-btn>
@@ -31,8 +31,8 @@
                   <v-expansion-panel-header>
                     <v-col>{{tracking[i].code}}</v-col>
                     <v-col>{{tracking[i].product}}</v-col>
-                    <v-col>{{receba[i].data[0].localState}}</v-col>
-                    <v-col>{{receba[i].data[0].description}}</v-col>
+                    <v-col v-if="receba[i].data[0].localState">{{receba[i].data[0].localState}}</v-col>
+                    <v-col v-if="receba[i].data[0].description">{{receba[i].data[0].description}}</v-col>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <ul v-for="(items,index) in receba[i].data" :key="index">
@@ -73,9 +73,8 @@ export default {
     },
     add() {
       this.tracking.push({
-        favorite: false,
-        status: this.code,
-        name: this.product
+        code: this.codeRegister,
+        product: this.productRegister
       });
     },
     acc() {
@@ -89,8 +88,6 @@ export default {
   },
   data() {
     return {
-      // Array will be automatically processed with visualization.arrayToDataTable function
-
       tracking: [
         { code: "LX008580575US", product: "Placa de video" },
         { code: "PX426417452BR", product: "Capinha de celular" },
@@ -98,8 +95,9 @@ export default {
       ],
       panel: [],
       items: 5,
-      receba: [],
-      codeOne: [{ codexd: "LX008580575US" }, { codexd: "PX426417452BR" }]
+      receba: [{data:{localState: '', description:'',date:'',time:''}},{data:{localState: '', description:'',date:'',time:''}}],
+      codeRegister: '',
+      productRegister: '',
     };
   }
 };
