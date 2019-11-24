@@ -27,12 +27,26 @@
             </div>
             <v-row justify="center">
               <v-expansion-panels v-model="panel" multiple>
-                <v-expansion-panel v-for="(item,i) in estrela" :key="i">
+                <v-expansion-panel v-for="(item,i) in tracking" :key="i">
                   <v-expansion-panel-header>
+                    <v-col>{{tracking[i].code}}</v-col>
+                    <v-col>{{tracking[i].product}}</v-col>
                     <v-col>{{receba[i].localState}}</v-col>
-                    <v-col>{{estrela[i].name}}</v-col>
+                    <v-col>{{receba[i].description}}</v-col>
                   </v-expansion-panel-header>
-                  <v-expansion-panel-content>{{i}}</v-expansion-panel-content>
+                  <v-expansion-panel-content>
+                    <ul v-for="(items,index) in receba[i].data" :key="index">
+                      <v-card style="margin: 10px;">
+                        <div style="margin-left: 30px">
+                          <li>Data: {{i}}</li>
+                          <li>Data: {{ receba[i].data[index].date }}</li>
+                          <li>Horário: {{ receba[i].data[index].time }}</li>
+                          <li>Localização {{ receba[i].data[index].localState }}</li>
+                          <li>Descrição: {{ receba[i].data[index].description }}</li>
+                        </div>
+                      </v-card>
+                    </ul>
+                  </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-row>
@@ -59,17 +73,17 @@ export default {
       this.panel = [];
     },
     add() {
-      this.estrela.push({
+      this.tracking.push({
         favorite: false,
         status: this.code,
         name: this.product
       });
     },
     acc() {
-      for (let index = 0; index < this.estrela.length; index++) {
-        const element = this.estrela[index];
+      for (let index = 0; index < this.tracking.length; index++) {
+        const element = this.tracking[index];
         Code.listar(element.code).then(resposta => {
-          this.receba[index] = resposta.data[index];
+          this.receba[index] = resposta;
         });
       }
     }
@@ -78,10 +92,10 @@ export default {
     return {
       // Array will be automatically processed with visualization.arrayToDataTable function
 
-      estrela: [
-        { code: "LX008580575US", status: "Outubro", name: "R$ 123.90" },
-        { code: "PX426417452BR", status: "Setembro", name: "R$ 98.76" },
-        { code: "PX426417452BR", status: "Agosto", name: "R$ 110.10" }
+      tracking: [
+        { code: "LX008580575US", product: "Placa de video" },
+        { code: "PX426417452BR", product: "Capinha de celular" },
+        { code: "PX303344961BR", product: "tua mãe" }
       ],
       panel: [],
       items: 5,
