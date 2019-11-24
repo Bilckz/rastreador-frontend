@@ -31,14 +31,13 @@
                   <v-expansion-panel-header>
                     <v-col>{{tracking[i].code}}</v-col>
                     <v-col>{{tracking[i].product}}</v-col>
-                    <v-col>{{receba[i].localState}}</v-col>
-                    <v-col>{{receba[i].description}}</v-col>
+                    <v-col>{{receba[i].data[0].localState}}</v-col>
+                    <v-col>{{receba[i].data[0].description}}</v-col>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <ul v-for="(items,index) in receba[i].data" :key="index">
                       <v-card style="margin: 10px;">
                         <div style="margin-left: 30px">
-                          <li>Data: {{i}}</li>
                           <li>Data: {{ receba[i].data[index].date }}</li>
                           <li>Horário: {{ receba[i].data[index].time }}</li>
                           <li>Localização {{ receba[i].data[index].localState }}</li>
