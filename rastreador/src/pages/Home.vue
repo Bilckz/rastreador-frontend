@@ -25,17 +25,22 @@
               <v-btn @click="all">Expandir todos</v-btn>
               <v-btn @click="none">Comprimir todos</v-btn>
             </div>
-            <v-row justify="center">
+            <v-row v-if="false">
+              <div style="margin: auto; height: 200px">
+                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+              </div>
+            </v-row>
+            <v-row justify="center" v-else>
               <v-expansion-panels v-model="panel" multiple>
-                <v-expansion-panel v-for="(item,i) in tracking" :key="i">
+                <v-expansion-panel v-for="(item,i) in receba" :key="i">
                   <v-expansion-panel-header>
                     <v-col>{{tracking[i].code}}</v-col>
                     <v-col>{{tracking[i].product}}</v-col>
-                    <v-col v-if="receba[i].data[0].localState">{{receba[i].data[0].localState}}</v-col>
-                    <v-col v-if="receba[i].data[0].description">{{receba[i].data[0].description}}</v-col>
+                    <v-col v-if="receba[i].data && receba[i].data[0].localState">{{receba[i].data[0].localState}}</v-col>
+                    <v-col v-if="receba[i].data && receba[i].data[0].description">{{receba[i].data[0].description}}</v-col>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
-                    <ul v-for="(items,index) in receba[i].data" :key="index">
+                    <ul v-for="(itaccems,index) in receba[i].data" :key="index">
                       <v-card style="margin: 10px;">
                         <div style="margin-left: 30px">
                           <li>Data: {{ receba[i].data[index].date }}</li>
@@ -59,8 +64,11 @@
 import Code from "../service/codes";
 
 export default {
-  mounted() {
-    this.acc();
+  
+  async mounted(){
+    await this.acc();
+    this.all();
+    this.none();
   },
 
   methods: {
@@ -80,10 +88,23 @@ export default {
     acc() {
       for (let index = 0; index < this.tracking.length; index++) {
         const element = this.tracking[index];
-        Code.listar(element.code).then(resposta => {
-          this.receba[index] = resposta;
-        });
+        Code.listar(element.code)
+          .then(resposta => {
+            this.receba[index] = resposta;
+            if ( (index +1) === this.tracking.length && this.receba[index].data) {
+
+              this.verdadi = false;
+              console.log("agora false")
+              
+            }
+            console.log(this.verdadi);
+          })
+          .catch(error => {
+            console.log("aaaa", error, "eeeee");
+          });
       }
+      console.log("arroi");
+      console.log(this.verdadi);
     }
   },
   data() {
@@ -95,9 +116,13 @@ export default {
       ],
       panel: [],
       items: 5,
-      receba: [{data:{localState: '', description:'',date:'',time:''}},{data:{localState: '', description:'',date:'',time:''}}],
-      codeRegister: '',
-      productRegister: '',
+      receba: [
+        { data: [{ localState: "", description: "", date: "", time: "" }] },
+        { data: [{ localState: "11111", description: "", date: "", time: "" }] }
+      ],
+      codeRegister: "",
+      productRegister: "",
+      verdadi: true
     };
   }
 };
