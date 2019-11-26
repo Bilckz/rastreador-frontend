@@ -25,7 +25,7 @@
               <v-btn @click="all">Expandir todos</v-btn>
               <v-btn @click="none">Comprimir todos</v-btn>
             </div>
-            <v-row v-if="false">
+            <v-row v-if="loading">
               <div style="margin: auto; height: 200px">
                 <v-progress-circular indeterminate color="primary"></v-progress-circular>
               </div>
@@ -36,17 +36,17 @@
                   <v-expansion-panel-header>
                     <v-col>{{tracking[i].code}}</v-col>
                     <v-col>{{tracking[i].product}}</v-col>
-                    <v-col v-if="receba[i].data && receba[i].data[0].localState">{{receba[i].data[0].localState}}</v-col>
-                    <v-col v-if="receba[i].data && receba[i].data[0].description">{{receba[i].data[0].description}}</v-col>
+                    <v-col>{{receba[i].data[0].localState}}</v-col>
+                    <v-col>{{receba[i].data[0].description}}</v-col>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
-                    <ul v-for="(itaccems,index) in receba[i].data" :key="index">
+                    <ul v-for="(prop,index) in receba[i].data" :key="index">
                       <v-card style="margin: 10px;">
                         <div style="margin-left: 30px">
-                          <li>Data: {{ receba[i].data[index].date }}</li>
-                          <li>Horário: {{ receba[i].data[index].time }}</li>
-                          <li>Localização {{ receba[i].data[index].localState }}</li>
-                          <li>Descrição: {{ receba[i].data[index].description }}</li>
+                          <li>Data: {{ prop.date }}</li>
+                          <li>Horário: {{ prop.time }}</li>
+                          <li>Localização {{ prop.localState }}</li>
+                          <li>Descrição: {{ prop.description }}</li>
                         </div>
                       </v-card>
                     </ul>
@@ -64,18 +64,14 @@
 import Code from "../service/codes";
 
 export default {
-  
-  async mounted(){
-    await this.acc();
-    this.all();
-    this.none();
+  async created() {
+    await this.getCodes();
   },
 
   methods: {
     all() {
       this.panel = [...Array(this.items).keys()].map((k, i) => i);
     },
-    // Reset the panel
     none() {
       this.panel = [];
     },
@@ -85,44 +81,30 @@ export default {
         product: this.productRegister
       });
     },
-    acc() {
-      for (let index = 0; index < this.tracking.length; index++) {
-        const element = this.tracking[index];
-        Code.listar(element.code)
+    async getCodes() {
+      const promises = this.tracking.map(async (element, index) => Code.listar(element.code)
           .then(resposta => {
             this.receba[index] = resposta;
-            if ( (index +1) === this.tracking.length && this.receba[index].data) {
 
-              this.verdadi = false;
-              console.log("agora false")
-              
-            }
-            console.log(this.verdadi);
           })
-          .catch(error => {
-            console.log("aaaa", error, "eeeee");
-          });
-      }
-      console.log("arroi");
-      console.log(this.verdadi);
-    }
+      );
+      await Promise.all(promises);
+      this.loading = false;
+    },
   },
   data() {
     return {
       tracking: [
         { code: "LX008580575US", product: "Placa de video" },
         { code: "PX426417452BR", product: "Capinha de celular" },
-        { code: "PX303344961BR", product: "tua mãe" }
+        { code: "PX303344961BR", product: "Mouse e teclado" }
       ],
       panel: [],
       items: 5,
-      receba: [
-        { data: [{ localState: "", description: "", date: "", time: "" }] },
-        { data: [{ localState: "11111", description: "", date: "", time: "" }] }
-      ],
+      receba: [],
       codeRegister: "",
       productRegister: "",
-      verdadi: true
+      loading: true
     };
   }
 };
