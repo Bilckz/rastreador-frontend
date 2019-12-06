@@ -5,7 +5,6 @@
       <v-app id="inspire">
         <v-app-bar app style="height: 75px;">
           <v-row id="barra">
-            <col />
             <v-toolbar-title id="olho">De olho no pacote</v-toolbar-title>
             <div class="flex-grow-1"></div>
             <v-col>
@@ -40,16 +39,11 @@
         </v-app-bar>
         <v-content>
           <v-container fluid fill-height style>
-            <v-col>
-              <v-row class="caminhao">
-                  tst
-              </v-row>
-              <v-row>
+            <v-col class="caminhao">
                 <h1>
                   Acompanhe todas as suas entregas
                   <br />em tempo real!
                 </h1>
-              </v-row>
             </v-col>
             <v-col>
               <v-layout align-center justify-center>
@@ -126,7 +120,8 @@ export default {
 
 .caminhao {
   background-image: url("../assets/caminhao.png");
-  background-size: cover;
+  background-size: contain;
   background-position: center;
+  height: 100%;
 }
 </style>

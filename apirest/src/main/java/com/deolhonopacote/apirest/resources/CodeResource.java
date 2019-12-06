@@ -1,0 +1,40 @@
+package com.deolhonopacote.apirest.resources;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.deolhonopacote.apirest.repository.CodeRepository;
+import com.deolhonopacote.apirest.models.Code;;
+
+
+@RestController
+@RequestMapping(value="/api")
+public class CodeResource {
+
+	@Autowired
+	CodeRepository codeRepository;
+	
+	@GetMapping("/codes")
+	public List<Code> listaCodes(){
+		return codeRepository.findAll();
+	}
+	
+	@GetMapping("/code/{id}")
+	public Code listaCode(@PathVariable(value="id") long id){
+		return codeRepository.findById(id);
+	}
+	
+	@PostMapping("/code")
+	public Code saveCode(@RequestBody @Valid Code code) {
+		return codeRepository.save(code);
+	}
+}

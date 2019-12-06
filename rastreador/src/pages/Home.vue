@@ -31,7 +31,7 @@
               </div>
             </v-row>
             <v-row justify="center" v-else>
-              <v-expansion-panels v-model="panel" multiple>
+              <v-expansion-panels loading v-model="panel" multiple>
                 <v-expansion-panel v-for="(item,i) in receba" :key="i">
                   <v-expansion-panel-header>
                     <v-col>{{tracking[i].code}}</v-col>
@@ -40,16 +40,21 @@
                     <v-col>{{receba[i].data[0].description}}</v-col>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
-                    <ul v-for="(prop,index) in receba[i].data" :key="index">
-                      <v-card style="margin: 10px;">
-                        <div style="margin-left: 30px">
+                    <v-timeline  dense>
+                      <v-timeline-item v-for="(prop,index) in receba[i].data" :key="index">
+                        <span slot="opposite">Tus eu perfecto</span>
+                        <v-card class="elevation-2">
+                          <v-card-title class="headline">{{ prop.localState }}</v-card-title>
+                          <v-card-text>
+                            <div style="margin-left: 30px">
                           <li>Data: {{ prop.date }}</li>
                           <li>Horário: {{ prop.time }}</li>
-                          <li>Localização {{ prop.localState }}</li>
                           <li>Descrição: {{ prop.description }}</li>
                         </div>
-                      </v-card>
-                    </ul>
+                          </v-card-text>
+                        </v-card>
+                      </v-timeline-item>
+                    </v-timeline>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -75,22 +80,23 @@ export default {
     none() {
       this.panel = [];
     },
-    add() {
+    async add() {
+      this.loading = true;
       this.tracking.push({
         code: this.codeRegister,
         product: this.productRegister
       });
+      await this.getCodes();
     },
     async getCodes() {
-      const promises = this.tracking.map(async (element, index) => Code.listar(element.code)
-          .then(resposta => {
-            this.receba[index] = resposta;
-
-          })
+      const promises = this.tracking.map(async (element, index) =>
+        Code.listar(element.code).then(resposta => {
+          this.receba[index] = resposta;
+        })
       );
       await Promise.all(promises);
       this.loading = false;
-    },
+    }
   },
   data() {
     return {
